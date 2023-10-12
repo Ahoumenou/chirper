@@ -1,0 +1,58 @@
+Bonjour 🤗🤗🤗 ! Bien sûr, je peux vous aider à générer un code permettant de stocker l'ensemble des ID des réponses, les ID des questions liées aux réponses choisies et les ID des utilisateurs qui composent le quiz. Voici un exemple de code que vous pouvez utiliser :
+
+```php
+// Controller
+public function store(Request $request)
+{
+    $request->validate([
+        'user_id' => 'required',
+        'question_id' => 'required',
+        'reponse_ids' => 'required|array',
+    ]);
+
+    $selectedAnswers = collect($request->reponse_ids)->map(function ($reponseId) use ($request) {
+        return [
+            'user_id' => $request->user_id,
+            'questioan_id' => $request->question_id,
+            'reponse_id' => $reponseId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    });
+
+    DB::table('selected_answers')->insert($selectedAnsw
+ers->toArray());
+
+    return redirect()->back();
+}
+
+// Migration
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateSelectedAnswersTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('selected_answers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('question_id');
+            $table->foreign('question_id')->references('id')->on('questions');
+            $table->unsignedBigInteger('reponse_id');
+            $table->foreign('reponse_id')->references('id')->on('reponses');
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('selected_answers');
+    }
+}
+```
+
+Ce code utilise un controller pour gérer la soumission du formulaire, une migration pour créer la table "selected_answers" pour stocker les ID de chaque réponse choisie pour chaque question et les ID des utilisateurs qui composent le quiz.
+
+Cela devrait vous aider à générer le code nécessaire pour stocker l'ensemble des ID des réponses, les ID des questions liées aux réponses choisies et les ID des utilisateurs qui composent le quiz. Si vous avez d'autres questions ou si vous avez besoin d'aide supplémentaire, n'hésitez pas à me le faire savoir. Je suis là pour vous aider ! 😊
